@@ -1,14 +1,19 @@
 package com.hsacademy.login.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.hsacademy.login.R;
 
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -49,27 +54,12 @@ public class ImageAdapter extends BaseAdapter {
             try {
                 String videoId = videoIDs[position];
 
-                // Should work :(
+                String img_url="http://img.youtube.com/vi/"+videoId+"/0.jpg";
+                System.out.println("videoid: " + videoId);
+                System.out.println("img_url: " + img_url);
 
-//                String img_url="http://img.youtube.com/vi/"+videoId+"/0.jpg";
-//                System.out.println("videoid: " + videoId);
-//                System.out.println("img_url: " + img_url);
-//
-//                Picasso.with(context)
-//                        .load(img_url)
-//                        .placeholder(R.mipmap.ic_launcher)
-//                        .into(imageView);
+                new DownLoadImageTask(imageView).execute(img_url);
 
-
-                if (videoId.equalsIgnoreCase("DUzFd3KQnGU")) {
-                    imageView.setImageResource(R.drawable.duzfd3kqngu);
-                } else if (videoId.equals("zSOUl9QmQwM")) {
-                    imageView.setImageResource(R.drawable.zsoui9qmqwm);
-                } else if (videoId.equals("YYvmvgebE1I")) {
-                    imageView.setImageResource(R.drawable.yyvmvgebe1i);
-                } else {
-                    imageView.setImageResource(R.drawable.f4fyknu5dt0);
-                }
             }
             catch (Exception e) {
                 System.out.println("e: " + e.getMessage());
@@ -110,6 +100,42 @@ public class ImageAdapter extends BaseAdapter {
             }
         }
         return id;
+    }
+
+    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap> {
+        ImageView imageView;
+
+        public DownLoadImageTask(ImageView imageView){
+            this.imageView = imageView;
+        }
+
+        /*
+            doInBackground(Params... params)
+                Override this method to perform a computation on a background thread.
+         */
+        protected Bitmap doInBackground(String...urls){
+            String urlOfImage = urls[0];
+            Bitmap logo = null;
+            try{
+                InputStream is = new URL(urlOfImage).openStream();
+                /*
+                    decodeStream(InputStream is)
+                        Decode an input stream into a bitmap.
+                 */
+                logo = BitmapFactory.decodeStream(is);
+            }catch(Exception e){ // Catch the download exception
+                e.printStackTrace();
+            }
+            return logo;
+        }
+
+        /*
+            onPostExecute(Result result)
+                Runs on the UI thread after doInBackground(Params...).
+         */
+        protected void onPostExecute(Bitmap result){
+            imageView.setImageBitmap(result);
+        }
     }
 
 }

@@ -9,7 +9,7 @@
         android:layout_width="300px"
         android:layout_height="300px"
         android:layout_marginRight="10px"
-        android:src="@drawable/play" >
+        android:src="@drawable/play2" >
     </ImageView>
 
 
